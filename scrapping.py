@@ -1,3 +1,4 @@
+import time
 import requests
 from bs4 import BeautifulSoup
 from lxml import etree
@@ -24,6 +25,7 @@ class TripAdvisorScrapper:
         self.soup: BeautifulSoup = BeautifulSoup(
             self.page.content, 'html.parser'
         )
+        print(self.soup)
         self.dom = etree.HTML(str(self.soup))
 
     def get_site_description(self):
@@ -48,12 +50,13 @@ class TripAdvisorScrapper:
 
     def get_site_attractions_strategy_2(self):
         title = self.dom.xpath(
-            '/html/body/div[1]/main/div[1]/div[2]/div[1]/header/div[3]/div[1]/div')
-        # print(title)
+            '/html/body/div[1]')
+        print(title)
         # body = self.dom.xpath(
         #    '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div')
         # print(body[0].text)
 
 
 scrapper = TripAdvisorScrapper()
+time.sleep(1)
 scrapper.get_site_description()
