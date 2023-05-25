@@ -12,12 +12,15 @@ class Attraction:
     def __init__(self, name: str, description: str, duration: str, location: str, city: str) -> None:
         pass
 
+    def __str__(self) -> str:
+        return f'Name: {self.name}\nDescription: {self.description}\nDuration: {self.duration}\nLocation: {self.location}\nCity: {self.city}'
+
 
 attractions: list[Attraction] = []
 
 
 class TripAdvisorScrapper:
-    url = 'https://www.tripadvisor.co/Attraction_Review-g294074-d550644-Reviews-Barrio_La_Candelaria-Bogota.html'
+    url = 'https://www.tripadvisor.co/Attraction_Review-g294074-d531644-Reviews-National_Museum_of_Colombia-Bogota.html'
 
     def __init__(self, path) -> None:
         self.driver: Chrome = webdriver.Chrome()
@@ -46,6 +49,11 @@ class TripAdvisorScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[3]/div[2]'
         )
         print(duration.text)
+        location = self.driver.find_element(
+            By.XPATH,
+            '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[5]/div/div/div[2]/div[1]/div/div/div/div[1]/button/span'
+        )
+        print(location.text)
         body = self.driver.find_element(
             By.XPATH,
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div'
@@ -63,6 +71,11 @@ class TripAdvisorScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[3]/div[2]'
         )
         print(duration.text)
+        location = self.driver.find_element(
+            By.XPATH,
+            '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[5]/div/div/div[2]/div[1]/div/div/div/div[1]/button/span'
+        )
+        print(location.text)
         body = self.driver.find_element(
             By.XPATH,
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div')
@@ -70,5 +83,4 @@ class TripAdvisorScrapper:
 
 
 scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH)
-time.sleep(1)
 scrapper.get_site_description()
