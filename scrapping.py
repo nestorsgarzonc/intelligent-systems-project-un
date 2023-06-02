@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import ElementClickInterceptedException
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 CHROME_DRIVER_PATH = '/Users/segc/Documents/chromedriver/chromedriver'
@@ -15,16 +16,17 @@ class Attraction:
     def __str__(self) -> str:
         return f'Name: {self.name}\nDescription: {self.description}\nDuration: {self.duration}\nLocation: {self.location}\nCity: {self.city}'
 
+urls = [
+    'https://www.tripadvisor.co/Attraction_Review-g294074-d531644-Reviews-National_Museum_of_Colombia-Bogota.html'
+]
 
 attractions: list[Attraction] = []
 
-
 class TripAdvisorScrapper:
-    url = 'https://www.tripadvisor.co/Attraction_Review-g294074-d531644-Reviews-National_Museum_of_Colombia-Bogota.html'
 
-    def __init__(self, path) -> None:
-        self.driver: Chrome = webdriver.Chrome()
-        self.driver.get(self.url)
+    def __init__(self, path, url) -> None:
+        self.driver: Chrome = webdriver.Chrome(ChromeDriverManager().install())
+        self.driver.get(url)
 
     def get_site_description(self):
         try:
@@ -59,6 +61,8 @@ class TripAdvisorScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div'
         )
         print(body.text)
+        attraction = Attraction(title, body, duration, location, 'Bogotá')
+        return attraction
 
     def get_site_attractions_strategy_2(self):
         title = self.driver.find_element(
@@ -81,6 +85,16 @@ class TripAdvisorScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div')
         print(body.text)
 
+        attraction = Attraction(title, body, duration, location, 'Bogotá')
+        return attraction
 
-scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH)
-scrapper.get_site_description()
+for url in urls:
+    print('###################'+url+'###################')
+    scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH, url)
+    attractionScrapped = scrapper.get_site_description()
+    print(attractionScrapped)
+    attractions.append(attractionScrapped)
+    print('################### END ###################')
+print (attractions)
+# scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH)
+# scrapper.get_site_description()
