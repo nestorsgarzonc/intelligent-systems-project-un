@@ -88,13 +88,13 @@ class TripAdvisorScrapper:
         attraction = Attraction(title, body, duration, location, 'Bogotá')
         return attraction
 
-for url in urls:
-    print('###################'+url+'###################')
-    scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH, url)
-    attractionScrapped = scrapper.get_site_description()
-    print(attractionScrapped)
-    attractions.append(attractionScrapped)
-    print('################### END ###################')
-print (attractions)
-# scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH)
-# scrapper.get_site_description()
+# for url in urls:
+#     print('###################'+url+'###################')
+#     scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH, url)
+#     attractionScrapped = scrapper.get_site_description()
+#     print(attractionScrapped)
+#     attractions.append(attractionScrapped)
+#     print('################### END ###################')
+# print (attractions)
+# # scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH)
+# # scrapper.get_site_description()

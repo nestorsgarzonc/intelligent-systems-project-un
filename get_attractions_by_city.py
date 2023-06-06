@@ -10,7 +10,7 @@ import pandas as pd
 from scrapping import Attraction
 
 BASE_URL = 'https://www.tripadvisor.co'
-MAX_PAGES = 20
+MAX_PAGES = 5
 BASE_PAGE_NUMBER = 30
 
 
@@ -46,7 +46,7 @@ class TripAdvisorAttractionsScrapper:
             self.driver.execute_script(
                 "arguments[0].scrollIntoView();", raw_item
             )
-            time.sleep(0.2)
+            time.sleep(0.01)
             tags = raw_item.find_elements(
                 By.TAG_NAME,
                 'a'
@@ -69,12 +69,13 @@ class TripAdvisorAttractionsScrapper:
             print(self.attractions_urls)
 
     def get_attractions(self):
+        city_name = 'Cartagena'
         for page in range(MAX_PAGES):
             self.get_site_attractions(
-                f'/Attractions-g294074-Activities-oa{page* BASE_PAGE_NUMBER}-Bogota.html',
-                'Bogota'
+                f'/Attractions-g297476-Activities-oa{page* BASE_PAGE_NUMBER}-Cartagena_Cartagena_District_Bolivar_Department.html',
+                city_name,
             )
-        self.to_csv('Bogota')
+        self.to_csv(city_name)
 
     def to_csv(self, city_name: str):
         df = pd.DataFrame(
