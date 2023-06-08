@@ -5,24 +5,27 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import ElementClickInterceptedException
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import pandas as pd
 
 CHROME_DRIVER_PATH = '/Users/segc/Documents/chromedriver/chromedriver'
-
-
-class Attraction:
-    def __init__(self, name: str, description: str, duration: str, location: str, city: str) -> None:
-        pass
-
-    def __str__(self) -> str:
-        return f'Name: {self.name}\nDescription: {self.description}\nDuration: {self.duration}\nLocation: {self.location}\nCity: {self.city}'
 
 urls = [
     'https://www.tripadvisor.co/Attraction_Review-g294074-d531644-Reviews-National_Museum_of_Colombia-Bogota.html'
 ]
 
-attractions: list[Attraction] = []
+class Attraction:
+    def __init__(self, title: str, description: str, duration: str, location: str, city: str):
+        self.title = title
+        self.description = description
+        self.duration = duration
+        self.location = location
+        self.city = city
 
-class TripAdvisorScrapper:
+
+    def __str__(self) -> str:
+        return f'Name: {self.title}\nDescription: {self.description}\nDuration: {self.duration}\nLocation: {self.location}\nCity: {self.city}'
+
+class TripAdvisorAttractionScrapper:
 
     def __init__(self, path, url) -> None:
         self.driver: Chrome = webdriver.Chrome(ChromeDriverManager().install())
@@ -30,15 +33,16 @@ class TripAdvisorScrapper:
 
     def get_site_description(self):
         try:
-            self.get_site_attractions_strategy_1()
+            attraction = self.get_site_attractions_strategy_1()
         except Exception as e:
             try:
                 print('Strategy 1 failed')
                 print(e)
-                self.get_site_attractions_strategy_2()
+                attraction = self.get_site_attractions_strategy_2()
             except Exception as e:
                 print('Strategy 2 failed')
                 print(e)
+        return attraction
 
     def get_site_attractions_strategy_1(self):
         title = self.driver.find_element(
@@ -61,7 +65,7 @@ class TripAdvisorScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div'
         )
         print(body.text)
-        attraction = Attraction(title, body, duration, location, 'Bogotá')
+        attraction = Attraction(title.text, body.text, duration.text, location.text, 'Bogotá')
         return attraction
 
     def get_site_attractions_strategy_2(self):
@@ -85,16 +89,36 @@ class TripAdvisorScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div')
         print(body.text)
 
-        attraction = Attraction(title, body, duration, location, 'Bogotá')
+        attraction = Attraction(title.text, body.text, duration.text, location.text, 'Bogotá')
         return attraction
+    
+class TripAdvisorAttractionLoader:
 
-# for url in urls:
-#     print('###################'+url+'###################')
-#     scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH, url)
-#     attractionScrapped = scrapper.get_site_description()
-#     print(attractionScrapped)
-#     attractions.append(attractionScrapped)
-#     print('################### END ###################')
-# print (attractions)
-# # scrapper = TripAdvisorScrapper(CHROME_DRIVER_PATH)
-# # scrapper.get_site_description()
+    def load_site_attractions_data(self, city_name):
+        if city_name not in ('Atlantico', 'Bogota', 'Boyaca', 'Bucaramanga', 'Cartagena', 'Medellin', 'SantaMarta', 'ValleDelCauca'):
+            print('La ciudad no es valida')
+            return
+        
+        df = pd.read_csv(f'attractions_{city_name}.csv')
+        df['title']  = ''
+        df['description'] = ''
+        df['duration'] = ''
+        df['location'] = ''
+        df['city'] = ''
+
+        for i in range(len(df)):
+            try:
+                scrapper = TripAdvisorAttractionScrapper('path', df['url'][i])
+                attractionScrapped = scrapper.get_site_description()
+                df['title'][i]  = attractionScrapped.title
+                df['description'][i]  = attractionScrapped.description
+                df['duration'][i]  = attractionScrapped.duration
+                df['location'][i]  = attractionScrapped.location
+                df['city'][i]  = attractionScrapped.city
+            except:
+                continue
+        df.to_csv(f'attractions_{city_name}.csv')
+
+if __name__ == '__main__':
+    scrapper = TripAdvisorAttractionLoader()
+    scrapper.load_site_attractions_data('Bogota')

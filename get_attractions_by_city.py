@@ -77,6 +77,29 @@ class TripAdvisorAttractionsScrapper:
             )
         self.to_csv(city_name)
 
+        # match city:
+        #     case 'Bogota': 
+        #         for page in range(MAX_PAGES):
+        #             self.get_site_attractions(
+        #                 f'/Attractions-g294074-Activities-oa{page* BASE_PAGE_NUMBER}-Bogota.html',
+        #                 city
+        #             )
+        #         self.to_csv(city)
+        #     case 'Medellin': 
+        #         for page in range(MAX_PAGES):
+        #             self.get_site_attractions(
+        #                 f'/Attractions-g297478-Activities-oa{page* BASE_PAGE_NUMBER}-Medellin_Antioquia_Department.html',
+        #                 city
+        #             )
+        #         self.to_csv(city)
+        #     case 'Cartagena':
+        #         for page in range(MAX_PAGES):
+        #             self.get_site_attractions(
+        #                 f'/Attractions-g297476-Activities-oa{page* BASE_PAGE_NUMBER}-Cartagena_Cartagena_District_Bolivar_Department.html',
+        #                 city,
+        #             )
+        #         self.to_csv(city)
+
     def to_csv(self, city_name: str):
         df = pd.DataFrame(
             [
