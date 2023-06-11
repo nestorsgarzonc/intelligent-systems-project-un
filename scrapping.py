@@ -15,36 +15,42 @@ urls = [
 
 class Attraction:
     def __init__(self, title: str, description: str, duration: str, location: str, city: str):
-        self.title = title
-        self.description = description
-        self.duration = duration
-        self.location = location
-        self.city = city
+        if (title):
+            self.title = title.replace('"', '').replace(',', '').replace('\n', '').strip()
+        if (description):
+            self.description = description.replace('"', '').replace(',', '').replace('\n', '').strip()
+        if (duration):
+            self.duration = duration.replace('"', '').replace(',', '').replace('\n', '').strip()
+        if (location):
+            self.location = location.replace('"', '').replace(',', '').replace('\n', '').strip()
+        if (city):
+            self.city = city.replace('"', '').replace(',', '').replace('\n', '').strip()
 
 
     def __str__(self) -> str:
         return f'Name: {self.title}\nDescription: {self.description}\nDuration: {self.duration}\nLocation: {self.location}\nCity: {self.city}'
+        
 
 class TripAdvisorAttractionScrapper:
 
-    def __init__(self, path, url) -> None:
-        self.driver: Chrome = webdriver.Chrome(ChromeDriverManager().install())
+    def __init__(self, path, url, driver) -> None:
+        self.driver: Chrome = driver
         self.driver.get(url)
 
-    def get_site_description(self):
+    def get_site_description(self, city_name):
         try:
-            attraction = self.get_site_attractions_strategy_1()
+            attraction = self.get_site_attractions_strategy_1(city_name)
         except Exception as e:
             try:
                 print('Strategy 1 failed')
                 print(e)
-                attraction = self.get_site_attractions_strategy_2()
+                attraction = self.get_site_attractions_strategy_2(city_name)
             except Exception as e:
                 print('Strategy 2 failed')
                 print(e)
         return attraction
 
-    def get_site_attractions_strategy_1(self):
+    def get_site_attractions_strategy_1(self, city_name):
         title = self.driver.find_element(
             By.XPATH,
             '/html/body/div[1]/main/div[1]/div[2]/div[1]/header/div[3]/div[1]/div/h1'
@@ -65,10 +71,10 @@ class TripAdvisorAttractionScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div'
         )
         print(body.text)
-        attraction = Attraction(title.text, body.text, duration.text, location.text, 'Bogotá')
+        attraction = Attraction(title.text, body.text, duration.text, location.text, city_name)
         return attraction
 
-    def get_site_attractions_strategy_2(self):
+    def get_site_attractions_strategy_2(self, city_name):
         title = self.driver.find_element(
             By.XPATH,
             '/html/body/div[1]/main/div[1]/div[2]/div[1]/header/div[3]/div[1]/div/h1'
@@ -89,7 +95,7 @@ class TripAdvisorAttractionScrapper:
             '/html/body/div[1]/main/div[1]/div[2]/div[2]/div[2]/div/div[1]/section[2]/div/div/div/div[1]/div[1]/div/div[2]/div/div[1]/div')
         print(body.text)
 
-        attraction = Attraction(title.text, body.text, duration.text, location.text, 'Bogotá')
+        attraction = Attraction(title.text, body.text, duration.text, location.text, city_name)
         return attraction
     
 class TripAdvisorAttractionLoader:
@@ -106,10 +112,12 @@ class TripAdvisorAttractionLoader:
         df['location'] = ''
         df['city'] = ''
 
+        driver = webdriver.Chrome(ChromeDriverManager().install())
+
         for i in range(len(df)):
             try:
-                scrapper = TripAdvisorAttractionScrapper('path', df['url'][i])
-                attractionScrapped = scrapper.get_site_description()
+                scrapper = TripAdvisorAttractionScrapper('path', df['url'][i], driver)
+                attractionScrapped = scrapper.get_site_description(city_name)
                 df['title'][i]  = attractionScrapped.title
                 df['description'][i]  = attractionScrapped.description
                 df['duration'][i]  = attractionScrapped.duration
@@ -121,4 +129,4 @@ class TripAdvisorAttractionLoader:
 
 if __name__ == '__main__':
     scrapper = TripAdvisorAttractionLoader()
-    scrapper.load_site_attractions_data('Bogota')
+    scrapper.load_site_attractions_data('ValleDelCauca')
