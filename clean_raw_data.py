@@ -27,7 +27,7 @@ for i in CSVS:
             print('Removing row ' + str(j))
             rows_to_drop.append(j)
         # Remove rows that name is not a string or is null
-        if type(csv['name'][j]) != str or csv['name'][j] == 'null' or csv['name'][j] == None or csv['name'][j] == '':
+        if type(csv['name'][j]) != str or csv['name'][j] == 'null' or csv['name'][j] == None or csv['name'][j] == '' or len(csv['name'][j]) == 4:
             print('Removing row ' + str(j))
             rows_to_drop.append(j)
     # Write the cleaned dataframes to csvs
