@@ -159,7 +159,7 @@ class TripAdvisorAttractionLoader:
         df['description'] = ''
         df['duration'] = ''
         df['location'] = ''
-        df['city'] = ''
+        # df['city'] = ''
 
         driver = webdriver.Chrome(ChromeDriverManager().install())
 
@@ -177,8 +177,8 @@ class TripAdvisorAttractionLoader:
                     df['duration'][i] = attractionScrapped.duration
                 if attractionScrapped.location:
                     df['location'][i] = attractionScrapped.location
-                if attractionScrapped.city:
-                    df['city'][i] = attractionScrapped.city
+                # if attractionScrapped.city:
+                #     df['city'][i] = attractionScrapped.city
             except Exception as e:
                 print('######## Start error #########')
                 print(f'Error in {df["url"][i]}')
@@ -189,7 +189,7 @@ class TripAdvisorAttractionLoader:
 
 
 if __name__ == '__main__':
-    for i in ['Atlantico', 'Bogota', 'Boyaca', 'Bucaramanga', 'Cartagena', 'Medellin', 'SantaMarta', 'ValleDelCauca']:
-        scrapper = TripAdvisorAttractionLoader()
-        scrapper.load_site_attractions_data(i)
-        time.sleep(random.uniform(30, 60))
+    # for i in ['Atlantico', 'Bogota', 'Boyaca', 'Bucaramanga', 'Cartagena', 'Medellin', 'SantaMarta', 'ValleDelCauca']:
+    scrapper = TripAdvisorAttractionLoader()
+    scrapper.load_site_attractions_data('Medellin')
+    # time.sleep(random.uniform(30, 60))
